@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🔧 Installing essential tools (zsh, curl, git, unzip)..."
+sudo apt update
+sudo apt install -y zsh curl git unzip wget tar
+
+# --- Starship ---
+if ! command -v starship >/dev/null 2>&1; then
+  echo "🚀 Installing Starship prompt..."
+  sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- -y
+else
+  echo "✅ Starship already installed."
+fi
+
+# --- eza (modern ls replacement) ---
+if ! command -v eza >/dev/null 2>&1; then
+  echo "📦 Installing eza..."
+  TMP_DIR=$(mktemp -d)
+  cd "$TMP_DIR"
+
+  wget -q https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz
+  tar -xvzf eza_x86_64-unknown-linux-gnu.tar.gz
+
+  # Move binary into ~/.local/bin (preferred for user installs)
+  mkdir -p "$HOME/.local/bin"
+  mv eza "$HOME/.local/bin/"
+
+  cd -
+  rm -rf "$TMP_DIR"
+else
+  echo "✅ eza already installed."
+fi
+
+# --- Fonts (FiraCode Nerd Font example) ---
+if [ ! -f "$HOME/.local/share/fonts/FiraCodeNerdFontMono-Regular.ttf" ]; then
+  echo "🔤 Installing FiraCode Nerd Font..."
+  mkdir -p "$HOME/.local/share/fonts"
+  TMP_FONT=$(mktemp -d)
+  cd "$TMP_FONT"
+
+  wget -q https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.zip
+  unzip -o FiraCode.zip -d "$HOME/.local/share/fonts"
+
+  fc-cache -f
+  cd -
+  rm -rf "$TMP_FONT"
+else
+  echo "✅ FiraCode Nerd Font already installed."
+fi
+
+echo "🎉 All tools installed."
