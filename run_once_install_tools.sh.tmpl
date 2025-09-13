@@ -32,6 +32,13 @@ else
   echo "✅ eza already installed."
 fi
 
+# Install fontconfig if missing
+if ! command -v fc-cache >/dev/null 2>&1; then
+    echo "🔧 Installing fontconfig..."
+    sudo apt-get update
+    sudo apt-get install -y fontconfig
+fi
+
 # --- Fonts (FiraCode Nerd Font example) ---
 if [ ! -f "$HOME/.local/share/fonts/FiraCodeNerdFontMono-Regular.ttf" ]; then
   echo "🔤 Installing FiraCode Nerd Font..."
